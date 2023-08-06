@@ -7,6 +7,8 @@ import a.exam.demo.networkservice.ApiState
 import a.exam.demo.viewmodel.MainActivityVM
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -22,7 +24,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mRecyclerView: RecyclerView
 
     private lateinit var mMainListAdapter: MainListRecyclerView
-    private var newsItems = arrayListOf<NewsData>()
+    private var mNewsItems = arrayListOf<NewsData>()
+    private var mAdTimerMap = HashMap<String, CountDownTimer>()
+
+    private val logTag = "ExamDemo"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +35,14 @@ class MainActivity : AppCompatActivity() {
         initView()
         initViewModel()
         collects()
+    }
+
+    override fun onDestroy() {
+        for (timer in mAdTimerMap) {
+            timer.value.cancel()
+        }
+
+        super.onDestroy()
     }
 
     private fun initView() {
@@ -58,8 +71,14 @@ class MainActivity : AppCompatActivity() {
                     val view = linearLayoutManager.findViewByPosition(pos)
                     if (view != null) {
                         val percentage = getVisibleHeightPercentage(view)
-                        newsItems[pos].percent = percentage.toInt()
+                        mNewsItems[pos].percent = percentage.toInt()
                         mMainListAdapter.notifyDataSetChanged()
+
+                        // TODO: remove this, only for test
+//                        if (pos % 2 == 0) {
+//                            mNewsItems[pos].isAd = true
+//                        }
+                        handleTimerForAd(pos)
                     }
                 }
             }
@@ -89,6 +108,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // TODO: move to SDK
+    private fun handleTimerForAd(pos: Int) {
+        val mapKey = pos.toString()
+
+        if (mNewsItems[pos].percent >= 50 && mNewsItems[pos].isAd) {
+            if (!mAdTimerMap.containsKey(mapKey)) {
+                Log.d(logTag, "pos: $pos, is start.")
+                val timer = object : CountDownTimer(60000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
+
+                    }
+
+                    override fun onFinish() {
+                        // TODO: send data to server
+                        Log.d(logTag, "pos: $pos, is finish.")
+                    }
+                }
+                timer.start()
+                mAdTimerMap[mapKey] = timer
+            }
+        } else {
+            if (mAdTimerMap.containsKey(mapKey)) {
+                val timer = mAdTimerMap[pos.toString()]
+                timer?.cancel()
+                mAdTimerMap.remove(mapKey)
+                Log.d("TAG", "pos: $pos, is cancel.")
+            }
+        }
+    }
+
     private fun initViewModel() {
         mMainActivityVM = ViewModelProvider(this)[MainActivityVM::class.java]
 
@@ -112,13 +161,13 @@ class MainActivity : AppCompatActivity() {
                         binding.swipeLayout.isRefreshing = false
 
                         val myObj = it.data as NewsResponse
-                        newsItems.clear()
+                        mNewsItems.clear()
 
                         for (item in myObj.articles) {
-                            newsItems.add(NewsData(item.title, item.summary, 100))
+                            mNewsItems.add(NewsData(item.title, item.summary, 100))
                         }
 
-                        mMainListAdapter = MainListRecyclerView(newsItems)
+                        mMainListAdapter = MainListRecyclerView(mNewsItems)
                         mRecyclerView.adapter = mMainListAdapter
 
                         mMainListAdapter.notifyDataSetChanged()
