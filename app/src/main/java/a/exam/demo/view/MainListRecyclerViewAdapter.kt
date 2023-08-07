@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class MainListRecyclerView(private val dataList: List<NewsData>) :
-    RecyclerView.Adapter<MainListRecyclerView.ViewHolder>() {
+class MainListRecyclerViewAdapter(private val dataList: List<NewsData>) :
+    RecyclerView.Adapter<MainListRecyclerViewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int

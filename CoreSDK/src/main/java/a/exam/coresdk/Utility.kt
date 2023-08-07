@@ -1,80 +1,83 @@
 package a.exam.coresdk
 
 import android.graphics.Rect
+import android.os.CountDownTimer
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 object Utility {
-    fun getViewVisibilityPercentsScreen(currentView: View): Int {
-        var viewPercents = 100
-        var rect: Rect = Rect()
-        val isVisible = currentView.getLocalVisibleRect(rect)
-        if (isVisible) {
-            val height = currentView.height
-            if (viewIsPartiallyHiddenTop(rect)) {
-                viewPercents = (height - rect.top)
-            } else if (viewIsPartiallyHiddenBottom(rect, height)) {
-                viewPercents = (rect.bottom * 100) / height
+    private var mAdTimerMap = HashMap<String, CountDownTimer>()
+
+    private const val logTag = "ExamDemo" // TODO Delete
+    fun checkAdState(recyclerView: RecyclerView, items: List<Any>) {
+        Log.d(logTag, "Utility.checkAdState")
+        val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
+        val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
+        val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
+
+        val globalVisibleRect = Rect()
+        recyclerView.getGlobalVisibleRect(globalVisibleRect)
+        for (pos in firstPosition..lastPosition) {
+            val view = linearLayoutManager.findViewByPosition(pos)
+            if (view != null) {
+                val percentage = getVisibleHeightPercentage(view)
+                val baseAdDataItem = items[pos] as BaseAdData
+
+                // TODO: remove this, only for test
+//                if (pos % 2 == 0) {
+//                    baseAdDataItem.isAd = true
+//                }
+
+                handleTimerForAd(pos, percentage.toInt(), baseAdDataItem.isAd)
             }
-        } else {
-            viewPercents = 0
         }
-
-        return viewPercents
     }
 
-    private fun viewIsPartiallyHiddenBottom(rect: Rect, height: Int): Boolean {
-        return rect.bottom in 1 until height
+    fun getVisibleHeightPercentage(view: View): Double {
+        val itemRect = Rect()
+        val isParentViewEmpty = view.getLocalVisibleRect(itemRect)
+
+        // Find the height of the item.
+        val visibleHeight = itemRect.height().toDouble()
+        val height = view.measuredHeight
+
+        val viewVisibleHeightPercentage = visibleHeight / height * 100
+
+        return if (isParentViewEmpty) {
+            viewVisibleHeightPercentage
+        } else {
+            0.0
+        }
     }
 
-    private fun viewIsPartiallyHiddenTop(rect: Rect): Boolean {
-        return rect.top > 0
-    }
+    private fun handleTimerForAd(pos: Int, percent: Int, isAd: Boolean) {
+        val mapKey = pos.toString()
 
-    fun getViewSelfVisibilityPercents(linearLayoutManager: LinearLayoutManager): Int {
-        var percent = 100
-        val position: Int = linearLayoutManager.findFirstVisibleItemPosition()
-        val rect = Rect()
-        linearLayoutManager.findViewByPosition(position)?.getGlobalVisibleRect(rect)
-
-        return percent
-    }
-
-    fun test(recycler: RecyclerView) {
-        recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val layoutManager = recycler.layoutManager as LinearLayoutManager
-                val firstPosition = layoutManager.findFirstVisibleItemPosition()
-                val lastPosition = layoutManager.findLastVisibleItemPosition()
-
-                val globalVisibleRect = Rect()
-                val itemVisibleRect = Rect()
-
-                recycler.getGlobalVisibleRect(globalVisibleRect)
-
-                for (pos in firstPosition..lastPosition) {
-                    val view = layoutManager.findViewByPosition(pos)
-                    if (view != null && view.height > 0 && view.getGlobalVisibleRect(itemVisibleRect)) {
-                        val visibilityExtent =
-                            if (itemVisibleRect.bottom >= globalVisibleRect.bottom) {
-                                val visibleHeight = globalVisibleRect.bottom - itemVisibleRect.top
-                                Math.min(visibleHeight.toFloat() / view.height, 1f)
-                            } else {
-                                val visibleHeight = itemVisibleRect.bottom - globalVisibleRect.top
-                                Math.min(visibleHeight.toFloat() / view.height, 1f)
-                            }
-
-                        val viewHolder =
-                            recycler.findViewHolderForAdapterPosition(pos) as RecyclerView.ViewHolder
-//                        viewHolder.setVisibilityExtent(visibilityExtent)
-
-                        // if percentage is needed...
-                        val percentage = visibilityExtent * 100
+        if (percent >= 50 && isAd) {
+            if (!mAdTimerMap.containsKey(mapKey)) {
+                Log.d(logTag, "pos: $pos, is start.")
+                val timer = object : CountDownTimer(60000, 1000) {
+                    override fun onTick(millisUntilFinished: Long) {
 
                     }
+
+                    override fun onFinish() {
+                        // TODO: send data to server
+                        Log.d(logTag, "pos: $pos, is finish.")
+                    }
                 }
+                timer.start()
+                mAdTimerMap[mapKey] = timer
             }
-        })
+        } else {
+            if (mAdTimerMap.containsKey(mapKey)) {
+                val timer = mAdTimerMap[pos.toString()]
+                timer?.cancel()
+                mAdTimerMap.remove(mapKey)
+                Log.d("TAG", "pos: $pos, is cancel.")
+            }
+        }
     }
 }

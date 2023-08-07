@@ -1,5 +1,6 @@
 package a.exam.demo.view
 
+import a.exam.coresdk.Utility
 import a.exam.demo.databinding.ActivityMainBinding
 import a.exam.demo.model.NewsData
 import a.exam.demo.model.NewsResponse
@@ -8,8 +9,6 @@ import a.exam.demo.viewmodel.MainActivityVM
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMainActivityVM: MainActivityVM
     private lateinit var mRecyclerView: RecyclerView
 
-    private lateinit var mMainListAdapter: MainListRecyclerView
+    private lateinit var mMainListAdapter: MainListRecyclerViewAdapter
     private var mNewsItems = arrayListOf<NewsData>()
     private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
@@ -61,26 +60,8 @@ class MainActivity : AppCompatActivity() {
 
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val linearLayoutManager = mRecyclerView.layoutManager as LinearLayoutManager
-                val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
-                val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
-
-                val globalVisibleRect = Rect()
-                mRecyclerView.getGlobalVisibleRect(globalVisibleRect)
-                for (pos in firstPosition..lastPosition) {
-                    val view = linearLayoutManager.findViewByPosition(pos)
-                    if (view != null) {
-                        val percentage = getVisibleHeightPercentage(view)
-                        mNewsItems[pos].percent = percentage.toInt()
-                        mMainListAdapter.notifyDataSetChanged()
-
-                        // TODO: remove this, only for test
-//                        if (pos % 2 == 0) {
-//                            mNewsItems[pos].isAd = true
-//                        }
-                        handleTimerForAd(pos)
-                    }
-                }
+                Utility.checkAdState(recyclerView, mNewsItems)
+                onlyForDemo(recyclerView, dx, dy)
             }
         })
 
@@ -89,51 +70,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: move to sdk
-    private fun getVisibleHeightPercentage(view: View): Double {
+    // I hope this app can show view percent, but I can't find better way to solve it now.
+    private fun onlyForDemo(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        val linearLayoutManager = mRecyclerView.layoutManager as LinearLayoutManager
+        val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
+        val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
 
-        val itemRect = Rect()
-        val isParentViewEmpty = view.getLocalVisibleRect(itemRect)
-
-        // Find the height of the item.
-        val visibleHeight = itemRect.height().toDouble()
-        val height = view.measuredHeight
-
-        val viewVisibleHeightPercentage = visibleHeight / height * 100
-
-        return if (isParentViewEmpty) {
-            viewVisibleHeightPercentage
-        } else {
-            0.0
-        }
-    }
-
-    // TODO: move to SDK
-    private fun handleTimerForAd(pos: Int) {
-        val mapKey = pos.toString()
-
-        if (mNewsItems[pos].percent >= 50 && mNewsItems[pos].isAd) {
-            if (!mAdTimerMap.containsKey(mapKey)) {
-                Log.d(logTag, "pos: $pos, is start.")
-                val timer = object : CountDownTimer(60000, 1000) {
-                    override fun onTick(millisUntilFinished: Long) {
-
-                    }
-
-                    override fun onFinish() {
-                        // TODO: send data to server
-                        Log.d(logTag, "pos: $pos, is finish.")
-                    }
-                }
-                timer.start()
-                mAdTimerMap[mapKey] = timer
-            }
-        } else {
-            if (mAdTimerMap.containsKey(mapKey)) {
-                val timer = mAdTimerMap[pos.toString()]
-                timer?.cancel()
-                mAdTimerMap.remove(mapKey)
-                Log.d("TAG", "pos: $pos, is cancel.")
+        val globalVisibleRect = Rect()
+        mRecyclerView.getGlobalVisibleRect(globalVisibleRect)
+        for (pos in firstPosition..lastPosition) {
+            val view = linearLayoutManager.findViewByPosition(pos)
+            if (view != null) {
+                val percentage = Utility.getVisibleHeightPercentage(view)
+                mNewsItems[pos].percent = percentage.toInt()
+                mMainListAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -167,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                             mNewsItems.add(NewsData(item.title, item.summary, 100))
                         }
 
-                        mMainListAdapter = MainListRecyclerView(mNewsItems)
+                        mMainListAdapter = MainListRecyclerViewAdapter(mNewsItems)
                         mRecyclerView.adapter = mMainListAdapter
 
                         mMainListAdapter.notifyDataSetChanged()
