@@ -12,7 +12,6 @@ object Utility {
 
     private const val logTag = "ExamDemo" // TODO Delete
     fun checkAdState(recyclerView: RecyclerView, items: List<Any>) {
-        Log.d(logTag, "Utility.checkAdState")
         val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
         val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
         val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
@@ -24,11 +23,6 @@ object Utility {
             if (view != null) {
                 val percentage = getVisibleHeightPercentage(view)
                 val baseAdDataItem = items[pos] as BaseAdData
-
-                // TODO: remove this, only for test
-//                if (pos % 2 == 0) {
-//                    baseAdDataItem.isAd = true
-//                }
 
                 handleTimerForAd(pos, percentage.toInt(), baseAdDataItem.isAd)
             }
@@ -76,7 +70,7 @@ object Utility {
                 val timer = mAdTimerMap[pos.toString()]
                 timer?.cancel()
                 mAdTimerMap.remove(mapKey)
-                Log.d("TAG", "pos: $pos, is cancel.")
+                Log.d(logTag, "pos: $pos, is cancel.")
             }
         }
     }

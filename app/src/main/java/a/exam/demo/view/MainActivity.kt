@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mRecyclerView: RecyclerView
 
     private lateinit var mMainListAdapter: MainListRecyclerViewAdapter
-    private var mNewsItems = arrayListOf<NewsData>()
+    private var mNewsItems: MutableList<NewsData> = arrayListOf()
     private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
     private val logTag = "ExamDemo"
@@ -113,8 +113,15 @@ class MainActivity : AppCompatActivity() {
                         val myObj = it.data as NewsResponse
                         mNewsItems.clear()
 
+                        var counter = 0
+                        val distance = 2
                         for (item in myObj.articles) {
-                            mNewsItems.add(NewsData(item.title, item.summary, 100))
+                            if (counter == distance) {
+                                mNewsItems.add(NewsData("AD", "This is AD", 100, true))
+                                counter = 0
+                            }
+                            mNewsItems.add(NewsData(item.title, item.summary, 100, false))
+                            ++counter
                         }
 
                         mMainListAdapter = MainListRecyclerViewAdapter(mNewsItems)
