@@ -25,3 +25,23 @@ My Flow
 4. Setup Timer rule.
 5. How to build SDK.
 6. Finish
+
+How to Use Utility.checkAdState(recyclerView, mListItems)
+
+1. Build a data class extends BaseAdData, like
+   data class DemoData(
+   var title: String? = "",
+   var summary: String? = "",
+   override var percent: Int = 0,
+   override var isAd: Boolean = false
+   ) : BaseAdData(percent, isAd)
+2. use it (DemoData) in custom class RecyclerViewAdapter extends RecyclerView.Adapter, like
+   MainListRecyclerViewAdapter(private val dataList: List<DemoData>)
+3. Call Utility.checkAdState(recyclerView, mListItems) in Showing ListView's activity's recyclerview
+   addOnScrollListener. Use Utility.checkAdState(recyclerView, mListItems) in override fun
+   onScrolled
+
+   mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+   override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+   Utility.checkAdState(recyclerView, mListItems) // This
+   } })
