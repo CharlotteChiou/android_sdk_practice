@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">ExamDemo</string>
-    <string name="main_title">News: Tesla</string>
-    <string name="apk_key">A1I39GfNvKiN9q1IZVYQWke6l2OtYF664xjvg6smXAA</string>
+    <string name="main_title">Exam Demo</string>
+    <string name="news_api_key">A1I39GfNvKiN9q1IZVYQWke6l2OtYF664xjvg6smXAA</string>
+    <string name="movie_api_key">Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NWFmZGNjNTllYzc4NGJlYjQ1ODgyOGE2ZWQyMmExYiIsInN1YiI6IjY0NDI3NzBjYjNmNmY1MDU1YTlkZjJjYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.adPJfAYVtx0eHitxZM97dPBml_8Ru5aQfNUyhmeZWCk</string>
+
+    <string name="list_fake_title">Fake Title</string>
+    <string name="list_fake_content">Take content xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</string>
 </resources>

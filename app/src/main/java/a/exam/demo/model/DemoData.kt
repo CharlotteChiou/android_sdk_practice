@@ -2,7 +2,7 @@ package a.exam.demo.model
 
 import a.exam.coresdk.BaseAdData
 
-data class NewsData(
+data class DemoData(
     var title: String? = "",
     var summary: String? = "",
     override var percent: Int = 0,

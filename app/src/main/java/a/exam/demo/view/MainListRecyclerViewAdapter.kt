@@ -1,12 +1,13 @@
 package a.exam.demo.view
 
 import a.exam.demo.databinding.ItemListBinding
-import a.exam.demo.model.NewsData
+import a.exam.demo.model.DemoData
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
-class MainListRecyclerViewAdapter(private val dataList: List<NewsData>) :
+
+class MainListRecyclerViewAdapter(private val dataList: List<DemoData>) :
     RecyclerView.Adapter<MainListRecyclerViewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -17,7 +18,7 @@ class MainListRecyclerViewAdapter(private val dataList: List<NewsData>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val bean: NewsData = dataList[position]
+        val bean: DemoData = dataList[position]
         holder.bind(bean)
     }
 
@@ -26,7 +27,7 @@ class MainListRecyclerViewAdapter(private val dataList: List<NewsData>) :
     }
 
     class ViewHolder(var binding: ItemListBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(bean: NewsData) {
+        fun bind(bean: DemoData) {
             binding.newsTitle.text = bean.title
             binding.newsContent.text = bean.summary
             binding.newsPercent.text = bean.percent.toString()

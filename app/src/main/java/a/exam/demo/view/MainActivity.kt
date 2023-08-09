@@ -1,9 +1,10 @@
 package a.exam.demo.view
 
 import a.exam.coresdk.Utility
+import a.exam.demo.R
 import a.exam.demo.databinding.ActivityMainBinding
-import a.exam.demo.model.NewsData
-import a.exam.demo.model.NewsResponse
+import a.exam.demo.model.DemoData
+import a.exam.demo.model.MovieResponse
 import a.exam.demo.networkservice.ApiState
 import a.exam.demo.viewmodel.MainActivityVM
 import android.graphics.Rect
@@ -23,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mRecyclerView: RecyclerView
 
     private lateinit var mMainListAdapter: MainListRecyclerViewAdapter
-    private var mNewsItems: MutableList<NewsData> = arrayListOf()
+    private var mListItems: MutableList<DemoData> = arrayListOf()
     private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
     private val logTag = "ExamDemo"
@@ -60,13 +61,13 @@ class MainActivity : AppCompatActivity() {
 
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                Utility.checkAdState(recyclerView, mNewsItems)
+                Utility.checkAdState(recyclerView, mListItems)
                 onlyForDemo(recyclerView, dx, dy)
             }
         })
 
         binding.swipeLayout.setOnRefreshListener {
-            mMainActivityVM.getNewsList()
+            mMainActivityVM.getMovieList()
         }
     }
 
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             val view = linearLayoutManager.findViewByPosition(pos)
             if (view != null) {
                 val percentage = Utility.getVisibleHeightPercentage(view)
-                mNewsItems[pos].percent = percentage.toInt()
+                mListItems[pos].percent = percentage.toInt()
                 mMainListAdapter.notifyDataSetChanged()
             }
         }
@@ -91,7 +92,8 @@ class MainActivity : AppCompatActivity() {
     private fun initViewModel() {
         mMainActivityVM = ViewModelProvider(this)[MainActivityVM::class.java]
 
-        mMainActivityVM.getNewsList()
+//        mMainActivityVM.getNewsList()
+        mMainActivityVM.getMovieList()
     }
 
     private fun collects() {
@@ -105,26 +107,27 @@ class MainActivity : AppCompatActivity() {
                     is ApiState.Failure -> {
                         it.e.printStackTrace()
                         binding.swipeLayout.isRefreshing = false
+                        makeFakeData()
                     }
 
                     is ApiState.Success -> {
                         binding.swipeLayout.isRefreshing = false
 
-                        val myObj = it.data as NewsResponse
-                        mNewsItems.clear()
+                        val movieResponse = it.data as MovieResponse
+                        mListItems.clear()
 
                         var counter = 0
                         val distance = 2
-                        for (item in myObj.articles) {
+                        for (item in movieResponse.results) {
                             if (counter == distance) {
-                                mNewsItems.add(NewsData("AD", "This is AD", 100, true))
+                                mListItems.add(DemoData("AD", "This is AD", 100, true))
                                 counter = 0
                             }
-                            mNewsItems.add(NewsData(item.title, item.summary, 100, false))
+                            mListItems.add(DemoData(item.title, item.overview, 100, false))
                             ++counter
                         }
 
-                        mMainListAdapter = MainListRecyclerViewAdapter(mNewsItems)
+                        mMainListAdapter = MainListRecyclerViewAdapter(mListItems)
                         mRecyclerView.adapter = mMainListAdapter
 
                         mMainListAdapter.notifyDataSetChanged()
@@ -135,6 +138,35 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun makeFakeData() {
+        for (fakeDataIndex in 0..100) {
+            mListItems.clear()
+
+            var counter = 0
+            val distance = 2
+            for (index in 0..50) {
+                if (counter == distance) {
+                    mListItems.add(DemoData("AD", "This is AD", 100, true))
+                    counter = 0
+                }
+                mListItems.add(
+                    DemoData(
+                        getString(R.string.list_fake_title),
+                        getString(R.string.list_fake_content),
+                        100,
+                        false
+                    )
+                )
+                ++counter
+            }
+
+            mMainListAdapter = MainListRecyclerViewAdapter(mListItems)
+            mRecyclerView.adapter = mMainListAdapter
+
+            mMainListAdapter.notifyDataSetChanged()
         }
     }
 }

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 object Utility {
     private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
-    private const val logTag = "ExamDemo" // TODO Delete
+    private const val logTag = "ExamDemo"
     fun checkAdState(recyclerView: RecyclerView, items: List<Any>) {
         val linearLayoutManager = recyclerView.layoutManager as LinearLayoutManager
         val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()

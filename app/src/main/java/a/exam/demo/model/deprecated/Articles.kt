@@ -1,9 +1,9 @@
-package a.exam.demo.model
+package a.exam.demo.model.deprecated
 
 import com.google.gson.annotations.SerializedName
 
 data class Articles(
-
+    // news api "Monthly API calls limit reached: 50"
     @SerializedName("title") var title: String? = null,
     @SerializedName("author") var author: String? = null,
     @SerializedName("published_date") var publishedDate: String? = null,

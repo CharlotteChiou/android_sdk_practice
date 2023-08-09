@@ -65,7 +65,7 @@ object RetrofitClient {
     val retrofit: RetrofitInterface by lazy {
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(gson))
-            .baseUrl(AllApi.NEWS_URL)
+            .baseUrl(AllApi.MOVIE_URL)
             .client(okHttpClient)
             .build().create(RetrofitInterface::class.java)
     }

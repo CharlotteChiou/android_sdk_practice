@@ -1,9 +1,9 @@
-package a.exam.demo.model
+package a.exam.demo.model.deprecated
 
 import com.google.gson.annotations.SerializedName
 
 data class UserInput(
-
+    // news api "Monthly API calls limit reached: 50"
     @SerializedName("q") var q: String? = null,
     @SerializedName("search_in") var searchIn: ArrayList<String> = arrayListOf(),
     @SerializedName("lang") var lang: String? = null,
