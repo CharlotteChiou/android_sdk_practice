@@ -25,8 +25,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMainListAdapter: MainListRecyclerViewAdapter
     private var mListItems: MutableList<DemoData> = arrayListOf()
 
-    private val logTag = "ExamDemo"
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -58,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 Utility.checkAdState(recyclerView, mListItems)
-                onlyForDemo(recyclerView, dx, dy)
+                onlyForDemo(recyclerView)
             }
         })
 
@@ -67,14 +65,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // I hope this app can show view percent, but I can't find better way to solve it now.
-    private fun onlyForDemo(recyclerView: RecyclerView, dx: Int, dy: Int) {
+    // This fun only for demo
+    // I hope this app can show view percent, but I couldn't find better way to solve it now.
+    private fun onlyForDemo(recyclerView: RecyclerView) {
         val linearLayoutManager = mRecyclerView.layoutManager as LinearLayoutManager
         val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
         val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
 
         val globalVisibleRect = Rect()
-        mRecyclerView.getGlobalVisibleRect(globalVisibleRect)
+        recyclerView.getGlobalVisibleRect(globalVisibleRect)
         for (pos in firstPosition..lastPosition) {
             val view = linearLayoutManager.findViewByPosition(pos)
             if (view != null) {
