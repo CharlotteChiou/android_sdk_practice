@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity() {
     private fun initViewModel() {
         mMainActivityVM = ViewModelProvider(this)[MainActivityVM::class.java]
 
-//        mMainActivityVM.getNewsList()
         mMainActivityVM.getMovieList()
     }
 
