@@ -46,6 +46,12 @@ object Utility {
         }
     }
 
+    fun onDestroy() {
+        for (timer in mAdTimerMap) {
+            timer.value.cancel()
+        }
+    }
+
     private fun handleTimerForAd(pos: Int, percent: Int, isAd: Boolean) {
         val mapKey = pos.toString()
 

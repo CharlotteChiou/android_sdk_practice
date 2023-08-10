@@ -9,7 +9,6 @@ import a.exam.demo.networkservice.ApiState
 import a.exam.demo.viewmodel.MainActivityVM
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.CountDownTimer
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mMainListAdapter: MainListRecyclerViewAdapter
     private var mListItems: MutableList<DemoData> = arrayListOf()
-    private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
     private val logTag = "ExamDemo"
 
@@ -38,9 +36,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        for (timer in mAdTimerMap) {
-            timer.value.cancel()
-        }
+        Utility.onDestroy()
 
         super.onDestroy()
     }
