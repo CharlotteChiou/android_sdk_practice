@@ -17,18 +17,6 @@ class MainActivityVM(application: Application) : AndroidViewModel(application) {
     private val itemRepository = ItemRepository()
     private val logTag = "ExamDemo"
 
-    fun getNewsList() = viewModelScope.launch {
-        wMessage.value = ApiState.Loading
-        val headers = HashMap<String, String>()
-        headers["x-api-key"] = getApplication<Application>().getString(R.string.news_api_key)
-        itemRepository.getNewsList(headers)
-            .catch { e ->
-                wMessage.value = ApiState.Failure(e)
-            }.collect { data ->
-                wMessage.value = ApiState.Success(data)
-            }
-    }
-
     fun getMovieList() = viewModelScope.launch {
         wMessage.value = ApiState.Loading
         val headers = HashMap<String, String>()
