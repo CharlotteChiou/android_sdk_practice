@@ -1,6 +1,6 @@
 package a.exam.demo.model
 
-import a.exam.coresdk.BaseAdData
+import a.exam.coresdk.model.BaseAdData
 
 data class DemoData(
     var title: String? = "",

@@ -17,6 +17,10 @@
 
 1. https://stackoverflow.com/questions/54095875/how-to-create-a-simple-countdown-timer-in-kotlin
 
+### ViewGroup
+
+1. https://developer.android.com/reference/android/view/ViewGroup
+
 ## My Flow
 
 1. Create new project and fix IDE problem before start coding.
@@ -26,27 +30,10 @@
 5. How to build SDK.
 6. Finish
 
-## How to Use Utility.checkAdState(recyclerView, mListItems)
+## How to Use Document
 
 https://docs.google.com/document/d/1NPA014nQr4p2mJPthRkjTY5NBaiYHX_Uy5pgpUQMZeM/edit?usp=sharing
 
-1. Build a data class extends BaseAdData, like
-   data class DemoData(
-   var title: String? = "",
-   var summary: String? = "",
-   override var percent: Int = 0,
-   override var isAd: Boolean = false
-   ) : BaseAdData(percent, isAd)
-2. use it (DemoData) in custom class RecyclerViewAdapter extends RecyclerView.Adapter, like
-   MainListRecyclerViewAdapter(private val dataList: List<DemoData>)
-3. Call Utility.checkAdState(recyclerView, mListItems) in Showing ListView's activity's recyclerview
-   addOnScrollListener. Use Utility.checkAdState(recyclerView, mListItems) in override fun
-   onScrolled
-
-   mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-   override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-   Utility.checkAdState(recyclerView, mListItems) // This
-   } })
 
 ## apk for test
 

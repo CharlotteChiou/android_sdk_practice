@@ -1,6 +1,10 @@
 package a.exam.demo.view
 
-import a.exam.coresdk.Utility
+import a.exam.coresdk.init.ExamCoreSDK
+import a.exam.coresdk.model.AdListener
+import a.exam.coresdk.model.AdView
+import a.exam.coresdk.network.AdRequest
+import a.exam.coresdk.utility.Utility
 import a.exam.demo.R
 import a.exam.demo.databinding.ActivityMainBinding
 import a.exam.demo.model.DemoData
@@ -28,9 +32,27 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initView()
-        initViewModel()
-        collects()
+        ExamCoreSDK.initialize(this, object : ExamCoreSDK.OnInitializationCompleteListener {
+            override fun onInitializationComplete(state: ExamCoreSDK.InitState) {
+                when (state) {
+                    ExamCoreSDK.InitState.SUCCESS -> {
+                        initView()
+                        initViewModel()
+                        collects()
+                    }
+
+                    ExamCoreSDK.InitState.FAILED -> {
+                        // Maybe re-init
+                    }
+
+                    ExamCoreSDK.InitState.OTHER -> {
+                        // Maybe check other setting
+                    }
+
+                    else -> {}
+                }
+            }
+        })
     }
 
     override fun onDestroy() {
@@ -55,13 +77,43 @@ class MainActivity : AppCompatActivity() {
 
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                Utility.checkAdState(recyclerView, mListItems)
+                Utility.checkRecyclerViewAdState(recyclerView, mListItems)
                 onlyForDemo(recyclerView)
             }
         })
 
         binding.swipeLayout.setOnRefreshListener {
             mMainActivityVM.getMovieList()
+        }
+
+        val adView = AdView(this, binding.adView)
+        adView.setAdSize(320, 100)
+        adView.loadAd(AdRequest(), mListener)
+    }
+
+    private val mListener = object : AdListener {
+        override fun onAdClicked() {
+
+        }
+
+        override fun onAdClosed() {
+
+        }
+
+        override fun onAdFailedToLoad() {
+
+        }
+
+        override fun onAdImpression() {
+
+        }
+
+        override fun onAdLoaded() {
+
+        }
+
+        override fun onAdOpened() {
+
         }
     }
 

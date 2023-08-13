@@ -1,4 +1,4 @@
-package a.exam.coresdk
+package a.exam.coresdk.model
 
 open class BaseAdData(
     open var percent: Int = 0,
