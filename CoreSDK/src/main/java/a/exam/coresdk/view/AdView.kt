@@ -1,8 +1,9 @@
-package a.exam.coresdk.model
+package a.exam.coresdk.view
 
+import a.exam.coresdk.model.AdListener
+import a.exam.coresdk.model.AdSize
 import a.exam.coresdk.network.AdRequest
 import a.exam.coresdk.utility.Utility
-import a.exam.coresdk.view.AdViewBanner
 import android.content.Context
 import android.view.View
 
@@ -60,7 +61,7 @@ class AdView(context: Context, view: AdViewBanner) {
         }
 
         mBannerAd.bringToFront()
-        Utility.handleBannerTimer(mBannerAd.getBannerADId())
+        Utility.startBannerTimer(mBannerAd.getBannerADId())
 
         mAdListener.onAdLoaded()
     }

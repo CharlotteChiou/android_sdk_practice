@@ -13,6 +13,7 @@ object Utility {
 
     // only one banner id
     private var mBannerId: String = ""
+    private var mInterstitialAd: String = ""
     private var mKeepList: ArrayList<String> = arrayListOf()
 
     private const val logTag = "ExamDemo"
@@ -41,10 +42,31 @@ object Utility {
         mBannerId = ""
     }
 
-    fun handleBannerTimer(adId: String?) {
+    fun startBannerTimer(adId: String?) {
         if (!adId.isNullOrEmpty()) {
             mBannerId = adId
             startTimerWithADId(adId)
+        }
+    }
+
+    fun cancelBannerTimer(adId: String?) {
+        if (!adId.isNullOrEmpty()) {
+            cancelTimerWithADId(adId)
+            mBannerId = ""
+        }
+    }
+
+    fun startInterstitialAdTimer(adId: String?) {
+        if (!adId.isNullOrEmpty()) {
+            mInterstitialAd = adId
+            startTimerWithADId(adId)
+        }
+    }
+
+    fun cancelInterstitialAdTimer(adId: String?) {
+        if (!adId.isNullOrEmpty()) {
+            cancelTimerWithADId(mInterstitialAd)
+            mInterstitialAd = ""
         }
     }
 
@@ -62,11 +84,14 @@ object Utility {
                 val baseAdDataItem = items[pos] as BaseAdData
 
                 handleTimerForListAd(pos, percentage.toInt(), baseAdDataItem.isAd)
+
+                (items[pos] as BaseAdData).percent = percentage.toInt()
+                recyclerView.adapter?.notifyDataSetChanged()
             }
         }
     }
 
-    fun getVisibleHeightPercentage(view: View): Double {
+    private fun getVisibleHeightPercentage(view: View): Double {
         val itemRect = Rect()
         val isParentViewEmpty = view.getLocalVisibleRect(itemRect)
 

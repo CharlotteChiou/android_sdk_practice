@@ -2,16 +2,14 @@ package a.exam.demo.view
 
 import a.exam.coresdk.init.ExamCoreSDK
 import a.exam.coresdk.model.AdListener
-import a.exam.coresdk.model.AdView
 import a.exam.coresdk.network.AdRequest
 import a.exam.coresdk.utility.Utility
-import a.exam.demo.R
+import a.exam.coresdk.view.AdView
 import a.exam.demo.databinding.ActivityMainBinding
 import a.exam.demo.model.DemoData
 import a.exam.demo.model.MovieResponse
 import a.exam.demo.networkservice.ApiState
 import a.exam.demo.viewmodel.MainActivityVM
-import android.graphics.Rect
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -78,7 +76,6 @@ class MainActivity : AppCompatActivity() {
         mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 Utility.checkRecyclerViewAdState(recyclerView, mListItems)
-                onlyForDemo(recyclerView)
             }
         })
 
@@ -117,25 +114,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // This fun only for demo
-    // I hope this app can show view percent, but I couldn't find better way to solve it now.
-    private fun onlyForDemo(recyclerView: RecyclerView) {
-        val linearLayoutManager = mRecyclerView.layoutManager as LinearLayoutManager
-        val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
-        val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
-
-        val globalVisibleRect = Rect()
-        recyclerView.getGlobalVisibleRect(globalVisibleRect)
-        for (pos in firstPosition..lastPosition) {
-            val view = linearLayoutManager.findViewByPosition(pos)
-            if (view != null) {
-                val percentage = Utility.getVisibleHeightPercentage(view)
-                mListItems[pos].percent = percentage.toInt()
-                mMainListAdapter.notifyDataSetChanged()
-            }
-        }
-    }
-
     private fun initViewModel() {
         mMainActivityVM = ViewModelProvider(this)[MainActivityVM::class.java]
 
@@ -153,7 +131,6 @@ class MainActivity : AppCompatActivity() {
                     is ApiState.Failure -> {
                         it.e.printStackTrace()
                         binding.swipeLayout.isRefreshing = false
-                        makeFakeData()
                     }
 
                     is ApiState.Success -> {
@@ -184,35 +161,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun makeFakeData() {
-        for (fakeDataIndex in 0..100) {
-            mListItems.clear()
-
-            var counter = 0
-            val distance = 2
-            for (index in 0..50) {
-                if (counter == distance) {
-                    mListItems.add(DemoData("AD", "This is AD", 100, true))
-                    counter = 0
-                }
-                mListItems.add(
-                    DemoData(
-                        getString(R.string.list_fake_title),
-                        getString(R.string.list_fake_content),
-                        100,
-                        false
-                    )
-                )
-                ++counter
-            }
-
-            mMainListAdapter = MainListRecyclerViewAdapter(mListItems)
-            mRecyclerView.adapter = mMainListAdapter
-
-            mMainListAdapter.notifyDataSetChanged()
         }
     }
 }
