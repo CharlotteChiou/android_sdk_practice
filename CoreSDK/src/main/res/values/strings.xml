@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="banner_text">only for demo</string>
+    <string name="native_text">only for demo</string>
 </resources>

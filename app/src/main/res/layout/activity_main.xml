@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="@dimen/common_padding_5"
-        app:layout_constraintBottom_toTopOf="@id/ad_view"
+        app:layout_constraintBottom_toTopOf="@id/ad_view_banner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title">
@@ -44,7 +44,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <a.exam.coresdk.view.AdViewBanner
-        android:id="@+id/ad_view"
+        android:id="@+id/ad_view_banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         practice:unit_id="test12345"

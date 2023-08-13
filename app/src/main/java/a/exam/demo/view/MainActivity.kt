@@ -8,6 +8,7 @@ import a.exam.coresdk.view.AdView
 import a.exam.demo.databinding.ActivityMainBinding
 import a.exam.demo.model.DemoData
 import a.exam.demo.model.MovieResponse
+import a.exam.demo.model.Results
 import a.exam.demo.networkservice.ApiState
 import a.exam.demo.viewmodel.MainActivityVM
 import android.os.Bundle
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
             mMainActivityVM.getMovieList()
         }
 
-        val adView = AdView(this, binding.adView)
+        val adView = AdView(this, binding.adViewBanner)
         adView.setAdSize(320, 100)
         adView.loadAd(AdRequest(), mListener)
     }
@@ -138,17 +139,7 @@ class MainActivity : AppCompatActivity() {
 
                         val movieResponse = it.data as MovieResponse
                         mListItems.clear()
-
-                        var counter = 0
-                        val distance = 2
-                        for (item in movieResponse.results) {
-                            if (counter == distance) {
-                                mListItems.add(DemoData("AD", "This is AD", 100, true))
-                                counter = 0
-                            }
-                            mListItems.add(DemoData(item.title, item.overview, 100, false))
-                            ++counter
-                        }
+                        handleInsertAd(movieResponse.results)
 
                         mMainListAdapter = MainListRecyclerViewAdapter(mListItems)
                         mRecyclerView.adapter = mMainListAdapter
@@ -161,6 +152,19 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun handleInsertAd(resultList: List<Results>) {
+        var counter = 0
+        val distance = 2
+        for (item in resultList) {
+            if (counter == distance) {
+                mListItems.add(DemoData("AD", "This is AD", 100, true))
+                counter = 0
+            }
+            mListItems.add(DemoData(item.title, item.overview, 100, false))
+            ++counter
         }
     }
 }

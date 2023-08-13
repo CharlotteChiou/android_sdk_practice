@@ -12,6 +12,7 @@
 
 1. https://blog.csdn.net/ChrisSen/article/details/84065243
 2. https://stackoverflow.com/questions/39503595/how-to-find-percentage-of-each-visible-item-in-recycleview
+3. https://stackoverflow.com/questions/41286746/android-measure-view-visible-area
 
 ### Timer
 

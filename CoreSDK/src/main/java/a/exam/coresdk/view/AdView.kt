@@ -5,7 +5,6 @@ import a.exam.coresdk.model.AdSize
 import a.exam.coresdk.network.AdRequest
 import a.exam.coresdk.utility.Utility
 import android.content.Context
-import android.view.View
 
 class AdView(context: Context, view: AdViewBanner) {
     private var mContext: Context
@@ -47,21 +46,18 @@ class AdView(context: Context, view: AdViewBanner) {
             }
 
             override fun onFailed() {
-                mBannerAd.visibility = View.GONE
-                mAdListener.onAdLoaded()
+                mBannerAd.hide()
+                mAdListener.onAdFailedToLoad()
             }
         })
     }
 
     private fun handleLoadSuccess() {
-        mBannerAd.visibility = View.VISIBLE
         mBannerAd.setOnClickListener {
             // TODO: onclick
             mAdListener.onAdClicked()
         }
-
-        mBannerAd.bringToFront()
-        Utility.startBannerTimer(mBannerAd.getBannerADId())
+        mBannerAd.show()
 
         mAdListener.onAdLoaded()
     }

@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 object Utility {
     private var mAdTimerMap = HashMap<String, CountDownTimer>()
 
-    // only one banner id
-    private var mBannerId: String = ""
     private var mInterstitialAd: String = ""
     private var mKeepList: ArrayList<String> = arrayListOf()
 
@@ -20,7 +18,9 @@ object Utility {
 
     fun onPause() {
         for (timer in mAdTimerMap) {
-            mKeepList.add(timer.key)
+            if (!mKeepList.contains(timer.key)) {
+                mKeepList.add(timer.key)
+            }
             timer.value.cancel()
             mAdTimerMap.remove(timer.key)
         }
@@ -30,8 +30,8 @@ object Utility {
         for (adId in mKeepList) {
             startTimerWithADId(adId)
         }
+        mKeepList.clear()
     }
-
 
     fun onDestroy() {
         for (timer in mAdTimerMap) {
@@ -39,12 +39,11 @@ object Utility {
         }
         mAdTimerMap.clear()
         mKeepList.clear()
-        mBannerId = ""
+        mInterstitialAd = ""
     }
 
     fun startBannerTimer(adId: String?) {
         if (!adId.isNullOrEmpty()) {
-            mBannerId = adId
             startTimerWithADId(adId)
         }
     }
@@ -52,11 +51,12 @@ object Utility {
     fun cancelBannerTimer(adId: String?) {
         if (!adId.isNullOrEmpty()) {
             cancelTimerWithADId(adId)
-            mBannerId = ""
         }
     }
 
+    // full page
     fun startInterstitialAdTimer(adId: String?) {
+        onPause()
         if (!adId.isNullOrEmpty()) {
             mInterstitialAd = adId
             startTimerWithADId(adId)
@@ -67,6 +67,19 @@ object Utility {
         if (!adId.isNullOrEmpty()) {
             cancelTimerWithADId(mInterstitialAd)
             mInterstitialAd = ""
+        }
+        onResume()
+    }
+
+    fun startNativeAdTimer(adId: String?) {
+        if (!adId.isNullOrEmpty()) {
+            startTimerWithADId(adId)
+        }
+    }
+
+    fun cancelNativeAdTimer(adId: String?) {
+        if (!adId.isNullOrEmpty()) {
+            cancelTimerWithADId(adId)
         }
     }
 
@@ -120,6 +133,9 @@ object Utility {
     }
 
     private fun startTimerWithADId(adId: String) {
+        if (!mKeepList.contains(adId)) {
+            mKeepList.add(adId)
+        }
         if (!mAdTimerMap.containsKey(adId)) {
             Log.d(logTag, "ad: $adId, is start.")
             val timer = object : CountDownTimer(60000, 1000) {
@@ -138,11 +154,50 @@ object Utility {
     }
 
     private fun cancelTimerWithADId(adId: String) {
+        if (mKeepList.contains(adId)) {
+            mKeepList.remove(adId)
+        }
+
         if (mAdTimerMap.containsKey(adId)) {
             val timer = mAdTimerMap[adId]
             timer?.cancel()
             mAdTimerMap.remove(adId)
             Log.d(logTag, "ad: $adId, is cancel.")
         }
+    }
+
+    /**
+     * Whether the view is at least certain % visible
+     * https://stackoverflow.com/questions/41286746/android-measure-view-visible-area
+     */
+    fun isVisibleForAd(
+        rootView: View?,
+        view: View?,
+        minPercentageViewed: Int
+    ): Boolean {
+        // ListView & GridView both call detachFromParent() for views that can be recycled for
+        // new data. This is one of the rare instances where a view will have a null parent for
+        // an extended period of time and will not be the main window.
+        // view.getGlobalVisibleRect() doesn't check that case, so if the view has visibility
+        // of View.VISIBLE but it's group has no parent it is likely in the recycle bin of a
+        // ListView / GridView and not on screen.
+        val clipRect = Rect()
+        rootView?.getWindowVisibleDisplayFrame(clipRect)
+
+        if (view == null || view.visibility != View.VISIBLE || rootView?.parent == null) {
+            return false
+        }
+
+        if (!view.getGlobalVisibleRect(clipRect)) {
+            // Not visible
+            return false
+        }
+
+        // % visible check - the cast is to avoid int overflow for large views.
+        val visibleViewArea: Long = clipRect.height() as Long * clipRect.width()
+        val totalViewArea = view.height.toLong() * view.width
+        return if (totalViewArea <= 0) {
+            false
+        } else 100 * visibleViewArea >= minPercentageViewed * totalViewArea
     }
 }

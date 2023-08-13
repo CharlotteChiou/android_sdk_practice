@@ -1,6 +1,7 @@
 package a.exam.coresdk.view
 
 import a.exam.coresdk.R
+import a.exam.coresdk.utility.Utility
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -25,11 +26,24 @@ class AdViewBanner(context: Context, attrs: AttributeSet) : View(context, attrs)
             }
         }
 
-        Log.d(logTag, "unit id: $mBannerADId")
+        Log.d(logTag, "banner unit id: $mBannerADId")
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
 
+    }
+
+    fun show() {
+        visibility = VISIBLE
+        bringToFront()
+        if (Utility.isVisibleForAd(rootView, this, 50)) {
+            Utility.startBannerTimer(mBannerADId)
+        }
+    }
+
+    fun hide() {
+        visibility = GONE
+        Utility.cancelBannerTimer(mBannerADId)
     }
 
     fun setSize(width: Int, height: Int) {
