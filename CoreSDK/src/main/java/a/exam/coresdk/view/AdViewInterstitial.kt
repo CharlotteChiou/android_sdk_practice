@@ -9,6 +9,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup
 
+// TODO: Reverse Engineering, modify to Object
+// https://developers.google.com/android/reference/com/google/android/gms/ads/interstitial/InterstitialAd
 class AdViewInterstitial(context: Context, attrs: AttributeSet) : ViewGroup(context, attrs) {
     private var mInterstitialADId: String? = ""
     private val logTag = "ExamDemo"
