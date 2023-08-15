@@ -36,6 +36,10 @@ class AdView(context: Context, view: AdViewBanner) {
         mBannerAd.setSize(width, height)
     }
 
+    fun setUnitId(id: String) {
+        mBannerAd.setBannerADId(id)
+    }
+
     fun loadAd(request: AdRequest, listener: AdListener) {
         // TODO: load ad and show
         mAdListener = listener

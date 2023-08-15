@@ -82,6 +82,10 @@ class AdViewNative : FrameLayout {
         mAdListener.onAdImpression()
     }
 
+    fun setUnitId(id: String) {
+        mNativeADId = id
+    }
+
     fun hide() { // or close
         visibility = GONE
         Utility.startNativeAdTimer(mNativeADId)

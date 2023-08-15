@@ -36,6 +36,10 @@ class AdViewInterstitial(context: Context, attrs: AttributeSet) : ViewGroup(cont
         Log.d(logTag, "interstitial unit id: $mInterstitialADId")
     }
 
+    fun setUnitId(id: String) {
+        mInterstitialADId = id
+    }
+
     fun load(context: Context, adRequest: AdRequest, listener: AdInterstitialListener) {
         loadAdFromServer(context, adRequest, listener)
     }
