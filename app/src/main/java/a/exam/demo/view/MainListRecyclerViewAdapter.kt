@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 
 
+// TODO: try to do
+// https://stackoverflow.com/questions/66580445/admob-native-ads-in-recyclerview-android
 class MainListRecyclerViewAdapter(private val dataList: List<DemoData>) :
     RecyclerView.Adapter<MainListRecyclerViewAdapter.ViewHolder>() {
     override fun onCreateViewHolder(

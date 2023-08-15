@@ -2,6 +2,7 @@ package a.exam.demo.view
 
 import a.exam.coresdk.init.ExamCoreSDK
 import a.exam.coresdk.model.AdListener
+import a.exam.coresdk.model.AdSize
 import a.exam.coresdk.network.AdRequest
 import a.exam.coresdk.utility.Utility
 import a.exam.coresdk.view.AdView
@@ -84,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val adView = AdView(this, binding.adViewBanner)
-        adView.setAdSize(320, 100)
+        adView.setAdSize(AdSize.BANNER)
         adView.loadAd(AdRequest(), mListener)
     }
 
