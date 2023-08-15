@@ -13,24 +13,19 @@
 3. https://stackoverflow.com/questions/41286746/android-measure-view-visible-area
 
 ### Timer
-
 1. https://stackoverflow.com/questions/54095875/how-to-create-a-simple-countdown-timer-in-kotlin
 
 ### ViewGroup
-
 1. https://developer.android.com/reference/android/view/ViewGroup
 
 ### recyclerview with Native Ad
-
 1. https://stackoverflow.com/questions/66580445/admob-native-ads-in-recyclerview-android
 
 ### Reverse Engineering
-
 1. https://developers.google.com/android/reference/com/google/android/gms/ads/interstitial/InterstitialAd
 2. https://firebase.google.com/docs/reference/android/com/google/android/gms/ads/nativead/NativeAdView
 
 ## My Flow
-
 1. Create new project and fix IDE problem before start coding.
 2. Need testing data -> Use Retrofit & coroutine to get news data.
 3. Area calculate.
